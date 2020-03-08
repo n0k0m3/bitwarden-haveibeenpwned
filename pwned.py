@@ -24,12 +24,12 @@ def get_pwned(password_hash: str) -> Dict[str, int]:
 
 
 def get_credentials(*args) -> Dict[str, Any]:
-    print('DEBUG')
-    print(args)
-    if args is not None:
-        result = subprocess.run(["bw", "list", "items", "--session", args], capture_output=True)
+    arg = args[0]
+    if arg is not None:
+        result = subprocess.run(["bw", "list", "items", "--session", arg], capture_output=True)
     else:
         result = subprocess.run(["bw", "list", "items"], capture_output=True)
+    print(result.stdout)
     items = json.loads(result.stdout)
     return [item for item in items if "login" in item]
 
@@ -45,6 +45,8 @@ def main():
             BW_SESSION = sys.argv[2]
         except:
             print('Secret key is empty, using system exported BW_SESSION')
+    else:
+        print('No secret key specified, using system exported BW_SESSION')
     credentials = get_credentials(BW_SESSION)
     for item in credentials:
         if not item["login"]["password"]:
