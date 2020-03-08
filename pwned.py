@@ -48,20 +48,26 @@ def main():
     else:
         print('No secret key specified, using system exported BW_SESSION')
     credentials = get_credentials(BW_SESSION)
-    for item in credentials:
-        if not item["login"]["password"]:
-            continue
-        password = item["login"]["password"].encode("utf-8")
-        password_hash = get_hash(password)
-        results = get_pwned(password_hash)
-        pwned = password_hash in results
-        if not pwned:
-            continue
-        count_pwned += 1
-        print(f"{item['login']['uris'][0]['uri']}:{item['login']['username']}:{item['login']['password']} has been pwned!")
-
+    with open('pwned_uri.csv','w+') as pwned_uri, open('pwned_nouri.csv','w+') as pwned_nouri:
+        for item in credentials:
+            if not item["login"]["password"]:
+                continue
+            password = item["login"]["password"].encode("utf-8")
+            password_hash = get_hash(password)
+            results = get_pwned(password_hash)
+            pwned = password_hash in results
+            if not pwned:
+                continue
+            count_pwned += 1
+            try:
+                output = f"{item['login']['uris'][0]['uri']}:{item['login']['username']}:{item['login']['password']}"
+                print(output+" has been pwned!")
+                pwned_uri.write(output+"\n")
+            except KeyError:
+                output = f"{item['name']}|{item['login']['username']}|{item['login']['password']}"
+                print(output+" has been pwned!")
+                pwned_nouri.write(output+"\n")
     print(f"{count_pwned} of {len(credentials)} logins have been pwned.")
-
-
+    
 if __name__ == "__main__":
     sys.exit(main())
