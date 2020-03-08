@@ -60,14 +60,14 @@ def main():
                 continue
             count_pwned += 1
             try:
-                output = f"{item['login']['uris'][0]['uri']}:{item['login']['username']}:{item['login']['password']}"
+                output = f"{item['login']['uris'][0]['uri']}|{item['login']['username']}|{item['login']['password']}"
                 print(output+" has been pwned!")
-                pwned_uri.write(output+"\n")
+                pwned_uri.write(str(output)+"\n")
             except KeyError:
                 output = f"{item['name']}|{item['login']['username']}|{item['login']['password']}"
                 print(output+" has been pwned!")
-                pwned_nouri.write(output+"\n")
+                pwned_nouri.write(str(output)+"\n")
     print(f"{count_pwned} of {len(credentials)} logins have been pwned.")
-    
+
 if __name__ == "__main__":
     sys.exit(main())
