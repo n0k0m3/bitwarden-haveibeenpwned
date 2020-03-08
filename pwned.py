@@ -23,15 +23,25 @@ def get_pwned(password_hash: str) -> Dict[str, int]:
     return results
 
 
-def get_credentials() -> Dict[str, Any]:
-    result = subprocess.run(["bw", "list", "items"], capture_output=True)
+def get_credentials(*args) -> Dict[str, Any]:
+    if args is not None:
+        result = subprocess.run(["bw", "list", "items", "--session", args], capture_output=True)
+    else:
+        result = subprocess.run(["bw", "list", "items"], capture_output=True)
     items = json.loads(result.stdout)
     return [item for item in items if "login" in item]
 
 
 def main():
     count_pwned = 0
-    credentials = get_credentials()
+    arg = sys.argv[1]
+    assert arg in ['--session'], \
+           'Use --session to use BW_SESSION secret key'
+    try:
+        BW_SESSION = sys.argv[2]
+    except:
+        BW_SESSION = None
+    credentials = get_credentials(BW_SESSION)
     for item in credentials:
         if not item["login"]["password"]:
             continue
@@ -42,7 +52,7 @@ def main():
         if not pwned:
             continue
         count_pwned += 1
-        print(f"{item['name']}:{item['login']['username']} has been pwned!")
+        print(f"{item['login']['uris'][0]['uri']}:{item['login']['username']}:{item['login']['password']} has been pwned!")
 
     print(f"{count_pwned} of {len(credentials)} logins have been pwned.")
 
