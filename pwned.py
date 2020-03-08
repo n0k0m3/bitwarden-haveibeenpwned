@@ -34,11 +34,11 @@ def get_credentials(*args) -> Dict[str, Any]:
 
 def main():
     count_pwned = 0
-    arg = sys.argv[1]
-    assert arg in ['--session'], \
-           'Use --session to use BW_SESSION secret key'
     try:
+        arg = sys.argv[1]
         BW_SESSION = sys.argv[2]
+        assert arg in ['--session'], \
+                'Use --session to use BW_SESSION secret key'
     except:
         BW_SESSION = None
     credentials = get_credentials(BW_SESSION)
