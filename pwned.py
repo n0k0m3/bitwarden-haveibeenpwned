@@ -34,13 +34,15 @@ def get_credentials(*args) -> Dict[str, Any]:
 
 def main():
     count_pwned = 0
-    try:
+    BW_SESSION = None
+    if len(sys.argv) > 1:
         arg = sys.argv[1]
-        BW_SESSION = sys.argv[2]
         assert arg in ['--session'], \
                 'Use --session to use BW_SESSION secret key'
-    except:
-        BW_SESSION = None
+        try:
+            BW_SESSION = sys.argv[2]
+        except:
+            print('Secret key is empty, using system exported BW_SESSION')
     credentials = get_credentials(BW_SESSION)
     for item in credentials:
         if not item["login"]["password"]:
