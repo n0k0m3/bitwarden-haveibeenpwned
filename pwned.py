@@ -24,6 +24,7 @@ def get_pwned(password_hash: str) -> Dict[str, int]:
 
 
 def get_credentials(*args) -> Dict[str, Any]:
+    print(args)
     if args is not None:
         result = subprocess.run(["bw", "list", "items", "--session", args], capture_output=True)
     else:
